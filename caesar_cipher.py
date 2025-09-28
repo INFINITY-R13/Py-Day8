@@ -1,37 +1,45 @@
 print("Caesar Cipher")
 
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-
-
-def caeser(original_text, shift_amount, encode_or_decode):
+def caesar(text, shift, direction):
     output_text = ""
+    shift = shift % 26  # Normalize shifts larger than 26
 
     if direction == "decode":
-        shift_amount *= -1
+        shift = -shift
 
-    for letter in original_text:
+    for char in text:
+        if char.isalpha():
+            # Handle uppercase letters
+            if char.isupper():
+                start = ord('A')
+            else:
+                start = ord('a')
 
-        if letter not in alphabet:
-            output_text += letter
+            # Compute shifted character with modulo wrap-around
+            shifted_pos = (ord(char) - start + shift) % 26
+            shifted_char = chr(start + shifted_pos)
+            output_text += shifted_char
         else:
-            shifted_position = alphabet.index(letter) + shift_amount
-            output_text += alphabet[shifted_position]
+            # Non-alphabetic characters are unchanged
+            output_text += char
 
-    print(f"Here is the {encode_or_decode}d result: {output_text}")    
+    print(f"Here is the {direction}d result: {output_text}")
 
 
 should_continue = True
 
 while should_continue:
-    direction = input("Type 'encode' to encrypt, type 'decode' to decrypt:\n")
-    text = input("Type your message:\n").lower()
+    direction = input("Type 'encode' to encrypt, type 'decode' to decrypt:\n").strip().lower()
+    while direction not in ("encode", "decode"):
+        print("Invalid input. Please type 'encode' or 'decode'.")
+        direction = input("Type 'encode' to encrypt, type 'decode' to decrypt:\n").strip().lower()
+
+    text = input("Type your message:\n")
     shift = int(input("Type the shift number:\n"))
 
-    caeser(original_text = text, shift_amount = shift, encode_or_decode = direction)
+    caesar(text, shift, direction)
 
-    restart = input("Type 'yes' if you want to continue, otherwise type 'no'.\n").lower()
+    restart = input("Type 'yes' if you want to continue, otherwise type 'no'.\n").strip().lower()
     if restart == "no":
         should_continue = False
         print("See you later!")
-
-
